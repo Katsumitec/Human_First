@@ -13,7 +13,7 @@
   - 每次 prompt 結果看運氣、AI 不懂專案硬規則（違反架構 / 洩密 / breaking change）
   - 規格只在腦袋裡無法審查、技術債堆積、前後端各做各的對不上
 - **使用者 / 適用情境**：想把 AI 開發從「會寫 prompt」升級成「有制度」的小團隊；不限技術棧，五個核心原則跨語言通用。
-- **產品本身**：二元預測市場（LMSR 撮合、自動結算、費率 ≤ 10%），MVP 已上線 `protype.kf-test.com`。
+- **產品本身**：二元預測市場（LMSR 撮合、自動結算、費率 ≤ 10%），MVP 已上線。
 
 ## 用了哪些 AI 工具與技術
 - **AI 工具 / 模型**：Claude Code（Opus）、Claude Agent SDK（驅動 AI 探索測試）、OpenAI Codex 訂閱（雙 runner 控成本）
@@ -54,12 +54,10 @@
 核心理念：**規範不是「希望 AI 記得」，而是系統在工具呼叫層攔截 —— 想違反也做不到。**
 
 ## Demo / 連結
-- 投影片：[`slides/predict-market-claude-sharing.pptx`](./slides/predict-market-claude-sharing.pptx)（28 張）
-- 完整講稿（含 ⭐ L4 AI 探索測試深講）：[`slides/speech-notes.md`](./slides/speech-notes.md)
-- 線上 MVP：`protype.kf-test.com`
+- 投影片：[`slides/predict-market-claude-sharing.pdf`](./slides/predict-market-claude-sharing.pdf)（28 張，亦附 `.pptx` 原始檔）
 
 ---
 ### 內容物清單
-- [x] `slides/` — 投影片（pptx）+ 完整講稿
+- [x] `slides/` — 投影片（PDF + pptx 原始檔）
 - [x] `architecture/` — 「AI 軟體工廠」架構與五層測試金字塔說明
 - [x] `skills-scripts/` — 可直接複用的 hook / skill / 權限設定
