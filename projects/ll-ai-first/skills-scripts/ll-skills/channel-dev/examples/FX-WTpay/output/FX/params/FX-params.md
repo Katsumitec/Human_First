@@ -1,0 +1,29 @@
+## FX
+
+### Channel Params
+
+| chnl_id | mchnt_cd | param_cat | param_id | param_value | orderSeq | param_desc | last_oper_id | param_st |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| FX | #DEFAULT# | PARAM | notify.sync.resp | ok | 100 | 异步通知时的响应讯息 |  | 1 |
+| FX | * | * | apitoken | R2mbEHVZybFf0POR3CBQPrY3Rc78X6LxyymtX5dwZaKeOEWAt86rMlLxF6v4 | 100 | 签名字段 |  | 1 |
+| FX | * | * | sign.field.ignore.names | channel,channelId,intTxnType,refId | 100 | 忽略签名字段 |  | 1 |
+| FX | * | * | sign.field.name | sign | 100 | 签名字段 |  | 1 |
+| FX | * | * | url.txn.query | https://tianciv690215.com/api/transaction/${chnlOrderId} | 100 | 代付请求地址 |  | 1 |
+| FX | * | * | url.txn.req | https://tianciv690215.com/api/transaction | 100 | 代付请求地址 |  | 1 |
+| FX | * | 0010 | chnl.qryType | 003 | 100 | 签名字段 |  | 1 |
+| FX | * | 0050 | chnl.qryType | 001 | 100 | 签名字段 |  | 1 |
+| FX | * | 0050 | url.txn.query | https://tianciv690215.com/api/payment/${chnlOrderId} | 100 | 代付请求地址 |  | 1 |
+| FX | * | 0121 | casher.url | http://paygate.dev-ai.org:9090/gateway-onl/casher/casher.fx.0121.do | 100 | GW收银台地址 |  | 1 |
+| FX | * | 012b | chnl.channel | 007000004 | 100 | 签名字段 |  | 1 |
+| FX | * | 5210 | chnl.channel | 007001101 | 100 | 签名字段 |  | 1 |
+| FX | * | 5210 | url.txn.req | https://tianciv690215.com/api/payment | 100 | 代付请求地址 |  | 1 |
+| FX | * | PARAM | sign.action.notify.check | 1 | 100 | 異步通知 |  | 1 |
+| FX | * | PARAM | sign.action.notify.check.by.template | 1 | 100 | 异步通知的签名是否使用模板 |  | 1 |
+| FX | * | PARAM | sign.action.qry.check | 0 | 100 | 是否驗簽：查询同步響應 |  | 1 |
+| FX | * | PARAM | sign.action.qry.check.by.template | 0 | 100 | 是否使用模板驗簽：查询同步響應 |  | 1 |
+| FX | * | PARAM | sign.action.qry.sign | 0 | 100 | 是否簽名：查询 |  | 1 |
+| FX | * | PARAM | sign.action.req.sign | 1 | 100 | 是否簽名：請求 |  | 1 |
+| FX | * | PARAM | sign.action.resp.check | 0 | 100 | 是否驗簽：請求同步響應 |  | 1 |
+| FX | * | PARAM | sign.action.resp.check.by.template | 0 | 100 | 请求同步响应的验签的待签字串是否使用模板 |  | 1 |
+| FX | llll7788 | SEC | sign.key | senc.v1::Fzvw8RN+elYDu2QhMzCNLVOjuud7hqoUV9gp+RuQQi0XW6YryjPdb7SfUhGDG0WVp7fCTVF8Lr/MhPtTtatOuC8vwCLFhLo8/shamQBAN6hfmC7+qcaFEPKp/wSmOQ+n7Hr+T9JiuOvw1MSDi4uXqvJqKstjWXP/CQgumYtAfYE= | 100 |  |  | 1 |
+| FX | llll7788 | SEC | verify.key | senc.v1::Fzvw8RN+elYDu2QhMzCNLVOjuud7hqoUV9gp+RuQQi0XW6YryjPdb7SfUhGDG0WVp7fCTVF8Lr/MhPtTtatOuC8vwCLFhLo8/shamQBAN6hfmC7+qcaFEPKp/wSmOQ+n7Hr+T9JiuOvw1MSDi4uXqvJqKstjWXP/CQgumYtAfYE= | 100 |  |  | 1 |
