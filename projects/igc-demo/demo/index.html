@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>IGC 地下城遺跡 Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="pc-backdrop" aria-hidden="true"></div>
+    <main class="stage" aria-label="IGC 地下城遺跡 demo">
+      <div class="phone-shell">
+        <div class="phone" data-view="lobby">
+          <section class="scene scene-lobby is-active" id="lobbyView" aria-label="地下城遺跡大廳">
+            <div class="top-haze"></div>
+            <header class="game-header">
+              <img class="header-plate" src="./assets/figma/header-plate-426-7.png" alt="" />
+              <div class="player">
+                <div class="avatar">
+                  <img class="avatar-face" src="./assets/figma/avatar-portrait-426-7.png" alt="" />
+                  <img class="avatar-ring" src="./assets/figma/avatar-ring-426-7.png" alt="" />
+                </div>
+                <div class="player-name">demouser01</div>
+              </div>
+              <div class="wallet">
+                <div class="wallet-label">餘額 USD</div>
+                <div class="wallet-amount">
+                  <img src="./assets/figma/coin-icon-426-7.png" alt="" />
+                  <span>12,450.00</span>
+                </div>
+              </div>
+              <button class="icon-button music-button" id="musicToggle" type="button" aria-label="切換背景音樂">
+                <img class="music-bg" src="./assets/figma/music-button-bg-426-7.png" alt="" />
+                <img class="music-icon" src="./assets/figma/music-note-icon-426-7.png" alt="" />
+                <span class="mute-slash" aria-hidden="true"></span>
+              </button>
+            </header>
+
+            <div class="search-row">
+              <label class="search-field">
+                <img class="search-field-frame" src="./assets/figma/search-input-frame.png" alt="" />
+                <img class="search-icon" src="./assets/figma/search-icon.png" alt="" aria-hidden="true" />
+                <input id="searchInput" type="search" placeholder="搜尋遊戲" autocomplete="off" />
+              </label>
+              <button class="square-button" id="filterButton" type="button" aria-label="進階搜尋">
+                <img class="button-bg" src="./assets/figma/filter-button-bg.png" alt="" />
+                <img class="button-icon" src="./assets/figma/filter-icon.png" alt="" />
+              </button>
+              <button class="square-button" id="sortButton" type="button" aria-label="排序">
+                <img class="button-bg" src="./assets/figma/filter-button-bg.png" alt="" />
+                <img class="button-icon" src="./assets/figma/sort-icon.png" alt="" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div class="active-chips" id="activeChips" aria-live="polite"></div>
+            <div class="game-scroll" id="gameScroll">
+              <div class="game-grid" id="gameGrid"></div>
+              <div class="empty-state" id="emptyState">沒有符合條件的遊戲</div>
+            </div>
+          </section>
+
+          <section class="scene scene-mini" id="miniView" aria-label="迷你廳">
+            <div class="top-haze"></div>
+            <header class="game-header">
+              <img class="header-plate" src="./assets/figma/header-plate-426-7.png" alt="" />
+              <div class="player">
+                <div class="avatar">
+                  <img class="avatar-face" src="./assets/figma/avatar-portrait-426-7.png" alt="" />
+                  <img class="avatar-ring" src="./assets/figma/avatar-ring-426-7.png" alt="" />
+                </div>
+                <div class="player-name">demouser01</div>
+              </div>
+              <div class="wallet">
+                <div class="wallet-label">餘額 USD</div>
+                <div class="wallet-amount">
+                  <img src="./assets/figma/coin-icon-426-7.png" alt="" />
+                  <span>12,450.00</span>
+                </div>
+              </div>
+              <button class="icon-button music-button mirror-music" type="button" aria-label="切換背景音樂">
+                <img class="music-bg" src="./assets/figma/music-button-bg-426-7.png" alt="" />
+                <img class="music-icon" src="./assets/figma/music-note-icon-426-7.png" alt="" />
+                <span class="mute-slash" aria-hidden="true"></span>
+              </button>
+            </header>
+            <div class="entry-frame">
+              <img class="entry-art" id="miniArt" src="./assets/runtime/shared/game-art/08_crystal_cavern.png" alt="" />
+              <img class="entry-decoration" src="./assets/runtime/mini-lobby/entry-art/entry-decoration-268x620-v02.png" alt="" />
+            </div>
+            <div class="mini-info">
+              <img src="./assets/runtime/mini-lobby/info-card/info-parchment-bg-323x84-v01.png" alt="" />
+              <div class="mini-copy">
+                <strong id="miniTitle">Crystal Cavern</strong>
+                <span id="miniProvider">IGC Studios</span>
+              </div>
+              <button class="favorite-button" id="favoriteButton" type="button" aria-label="收藏遊戲">
+                <img class="favorite-off" src="./assets/runtime/mini-lobby/favorite-button/favorite-off-56x56-v01.png" alt="" />
+                <img class="favorite-on" src="./assets/runtime/mini-lobby/favorite-button/favorite-on-56x56-v01.png" alt="" />
+              </button>
+            </div>
+            <button class="play-button" type="button">
+              <img src="./assets/runtime/mini-lobby/play-button/play-button-bg-310x84-v02-fiery.png" alt="" />
+              <span>PLAY</span>
+            </button>
+          </section>
+
+          <footer class="footer-nav" aria-label="大廳導覽">
+            <img class="footer-base" src="./assets/runtime/mobile-lobby/bottom-nav/footer-base-377x88-v02.png" alt="" />
+            <button class="nav-item is-active" data-nav="home" type="button">
+              <img class="nav-slab active-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-active-92x64-v02.png" alt="" />
+              <img class="nav-slab inactive-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-inactive-92x64-v02.png" alt="" />
+              <img class="nav-icon" src="./assets/runtime/mobile-lobby/bottom-nav/icons/footer-home-active-28x28-v01.png" alt="" />
+              <span>Home</span>
+            </button>
+            <button class="nav-item" data-nav="favorites" type="button">
+              <img class="nav-slab active-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-active-92x64-v02.png" alt="" />
+              <img class="nav-slab inactive-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-inactive-92x64-v02.png" alt="" />
+              <img class="nav-icon" src="./assets/runtime/mobile-lobby/bottom-nav/icons/footer-favorites-inactive-28x28-v01.png" alt="" />
+              <span>Favorites</span>
+            </button>
+            <button class="nav-item" data-nav="recent" type="button">
+              <img class="nav-slab active-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-active-92x64-v02.png" alt="" />
+              <img class="nav-slab inactive-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-inactive-92x64-v02.png" alt="" />
+              <img class="nav-icon" src="./assets/runtime/mobile-lobby/bottom-nav/icons/footer-recent-inactive-28x28-v01.png" alt="" />
+              <span>Recent</span>
+            </button>
+            <button class="nav-item" data-nav="account" type="button">
+              <img class="nav-slab active-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-active-92x64-v02.png" alt="" />
+              <img class="nav-slab inactive-slab" src="./assets/runtime/mobile-lobby/bottom-nav/footer-item-inactive-92x64-v02.png" alt="" />
+              <img class="nav-icon" src="./assets/runtime/mobile-lobby/bottom-nav/icons/footer-account-inactive-28x28-v01.png" alt="" />
+              <span>Account</span>
+            </button>
+          </footer>
+
+          <div class="overlay" id="overlay" aria-hidden="true"></div>
+          <section class="sheet filter-sheet" id="filterSheet" aria-label="進階搜尋" aria-hidden="true">
+            <div class="filter-tabs" role="tablist" aria-label="篩選分類">
+              <button class="is-active" data-filter-tab="providers" type="button">品牌</button>
+              <button data-filter-tab="categories" type="button">分類</button>
+              <button data-filter-tab="styles" type="button">風格</button>
+            </div>
+            <div class="option-grid" id="filterOptions"></div>
+            <div class="sheet-actions">
+              <button class="secondary-action" id="clearFilters" type="button">清除篩選</button>
+              <button class="primary-action" id="applyFilters" type="button">關閉</button>
+            </div>
+          </section>
+
+          <section class="sheet sort-sheet" id="sortSheet" aria-label="排序" aria-hidden="true">
+            <div class="sort-list">
+              <button data-sort="recommended" type="button">推薦</button>
+              <button data-sort="popular" type="button">熱門</button>
+              <button data-sort="latest" type="button">最新</button>
+            </div>
+            <div class="sheet-actions">
+              <button class="secondary-action" id="clearSort" type="button">清除篩選</button>
+              <button class="primary-action close-sort" type="button">關閉</button>
+            </div>
+          </section>
+
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
