@@ -4,6 +4,7 @@
 
 - 分享者：Erin
 - 專案類型：AI 輔助 UI/UX 設計、設計到互動實作的可行性探索
+- Figma 設計圖：[IGC 202605地下城遺跡 IGC DEMO](https://www.figma.com/design/iJWW8DyRluQyPrAOdMjhxH/IGC-202605%E5%9C%B0%E4%B8%8B%E5%9F%8E%E9%81%BA%E8%B7%A1--IGC-DEMO-?node-id=0-1&t=xv8Y8Ys7qxJF80eC-1)
 - Demo source：[demo/](demo/)
 - 原始 repo：[erinlin968/IGC-Demo](https://github.com/erinlin968/IGC-Demo)
 - 投影片：[20260608_Erin_用ai輔助UIUX設計.pdf](slides/20260608_Erin_用ai輔助UIUX設計.pdf)
@@ -23,6 +24,7 @@ Demo 內容包含手機版遊戲大廳、搜尋、篩選、排序、底部導覽
 ## 產出內容
 
 - AI 輔助 UI/UX 設計分享投影片
+- Figma 設計圖
 - IGC Dungeon Ruins 靜態互動 demo
 - 可延伸為設計審查、prototype 驗收與前端實作溝通素材
 
