@@ -1,0 +1,56 @@
+{
+  "bots": {
+    "hr-bot": {
+      "app_id": "YOUR_HR_BOT_APP_ID",
+      "app_secret": "YOUR_HR_BOT_APP_SECRET"
+    },
+    "benefit-bot": {
+      "app_id": "YOUR_BENEFIT_BOT_APP_ID",
+      "app_secret": "YOUR_BENEFIT_BOT_APP_SECRET"
+    }
+  },
+  "automations": [
+    {
+      "id": "birthday-card",
+      "name": "發生日卡",
+      "type": "scheduled",
+      "bot": "benefit-bot",
+      "description": "每天 10:00 自動對照 Bitable 生日欄位發送，無需手動觸發",
+      "recipient_bitable": {
+        "app_token": "YOUR_BITABLE_APP_TOKEN",
+        "table_id": "YOUR_TABLE_ID",
+        "name_field": "英文名字",
+        "email_field": "email",
+        "birthday_field": "生日提醒日",
+        "sent_flag_field": "是否已發送"
+      },
+      "template": {
+        "color": "yellow",
+        "has_image": false,
+        "variables": ["{姓名}"]
+      }
+    },
+    {
+      "id": "activity-notice",
+      "name": "活動通知",
+      "type": "dynamic",
+      "bot": "benefit-bot",
+      "description": "每次發送前填寫活動內容，可選擇發送對象（個別員工或全員）",
+      "recipient_bitable": {
+        "app_token": "YOUR_BITABLE_APP_TOKEN",
+        "table_id": "YOUR_TABLE_ID",
+        "name_field": "英文名字",
+        "email_field": "email"
+      },
+      "template": {
+        "color": "green",
+        "has_image": true,
+        "variables": ["{活動名稱}", "{活動時間}", "{活動地點}", "{報名截止日}"],
+        "buttons": [
+          { "text": "我要報名", "type": "url", "url": "" },
+          { "text": "無法參加", "type": "callback", "value": "decline" }
+        ]
+      }
+    }
+  ]
+}
