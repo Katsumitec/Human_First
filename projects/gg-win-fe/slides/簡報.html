@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前端應用討論會 · Figma 與前端設計規範</title>
+<style>
+  @font-face{
+    font-family:"FashionableBlack";
+    src:url("fashionable-black-simplified.woff2") format("woff2");
+    font-weight:normal;font-style:normal;font-display:swap;
+  }
+  :root{
+    --bg:#1a0b2e; --bg2:#2a1450; --panel:#241042; --panel2:#2e1556;
+    --ink:#f3ecff; --ink-dim:#c4b0e6; --ink-mute:#9a86c4;
+    --accent:#c08bff; --accent2:#ff7bd5; --accent3:#7ee0e0;
+    --good:#7ee0a8; --warn:#ffd36b; --bad:#ff8aa0;
+    --line:rgba(192,139,255,.22); --line2:rgba(192,139,255,.4);
+    --card:linear-gradient(160deg,#2c1556,#1d0d3a);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"FashionableBlack","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+    background:#0d0518; color:var(--ink); overflow:hidden;
+  }
+  #bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+  #deck{height:100vh;width:100vw;position:relative;z-index:1;perspective:1700px}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    padding:4.2vh 5vw 7vh;
+    background:radial-gradient(1200px 700px at 80% -10%,rgba(255,123,213,.10),transparent 60%),
+               radial-gradient(1000px 800px at 0% 110%,rgba(126,224,224,.08),transparent 55%),
+               linear-gradient(150deg,rgba(26,11,46,.62),rgba(42,20,80,.46));
+    backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+    transform-style:preserve-3d;
+    animation:slideIn .62s cubic-bezier(.2,.75,.2,1);
+  }
+  .slide.active{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes slideIn{
+    0%{opacity:0;transform:translateY(30px) translateZ(-220px) rotateX(8deg)}
+    100%{opacity:1;transform:none}
+  }
+  .slide.active>*{animation:riseUp .7s cubic-bezier(.2,.75,.2,1) both}
+  .slide.active>*:nth-child(2){animation-delay:.05s}
+  .slide.active>*:nth-child(3){animation-delay:.1s}
+  .slide.active>*:nth-child(4){animation-delay:.16s}
+  .slide.active>*:nth-child(5){animation-delay:.22s}
+  @keyframes riseUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+  .kicker{font-size:1.05vw;letter-spacing:.32em;color:var(--accent2);
+    text-transform:uppercase;font-weight:700;margin-bottom:1.4vh}
+  h1{font-size:4.4vw;line-height:1.08;font-weight:800;letter-spacing:.01em}
+  h2{font-size:2.7vw;line-height:1.12;font-weight:800;margin-bottom:2.4vh}
+  h2 .em{background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .lead{font-size:1.5vw;color:var(--ink-dim);line-height:1.6;max-width:62ch}
+  .pageno{position:absolute;right:3vw;bottom:3vh;font-size:1vw;color:var(--ink-mute);letter-spacing:.1em}
+  .tag{position:absolute;left:5vw;bottom:3vh;font-size:.95vw;color:var(--ink-mute);letter-spacing:.18em}
+  .bar{height:.5vh;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+    border-radius:99px;width:14vw;margin:2vh 0 0}
+
+  ul.pts{list-style:none;display:flex;flex-direction:column;gap:1.5vh;margin-top:1vh}
+  ul.pts li{font-size:1.42vw;line-height:1.5;color:var(--ink);padding-left:2.4vw;position:relative}
+  ul.pts li::before{content:"";position:absolute;left:0;top:.62vh;width:1.1vw;height:1.1vw;border-radius:4px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2))}
+  ul.pts li b{color:var(--accent)}
+  ul.pts li .dim{color:var(--ink-mute);font-size:1.15vw}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:2.4vw;align-items:center;flex:1;min-height:0}
+  .grid12{display:grid;grid-template-columns:1.05fr .95fr;gap:2.4vw;align-items:center;flex:1;min-height:0}
+
+  table{width:100%;border-collapse:collapse;font-size:1.12vw}
+  th,td{text-align:left;padding:1.15vh 1.1vw;border-bottom:1px solid var(--line);vertical-align:middle}
+  thead th{color:var(--accent2);font-size:1vw;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid var(--line2)}
+  td b{color:var(--ink)}
+  td .code{font-family:ui-monospace,Menlo,monospace;color:var(--accent3);font-size:.95vw;
+    background:rgba(126,224,224,.08);padding:.2vh .5vw;border-radius:5px}
+  tbody tr:hover{background:rgba(192,139,255,.06)}
+  .cost{color:var(--bad)}
+
+  .cards{display:grid;gap:1.6vw;flex:1;min-height:0;align-content:center}
+  .cards.c3{grid-template-columns:repeat(3,1fr)}
+  .cards.c4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:2.4vh 1.5vw;
+    box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  .card .n{font-size:2.4vw;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .card h3{font-size:1.32vw;margin:.6vh 0 1vh;font-weight:700}
+  .card p{font-size:1.02vw;color:var(--ink-dim);line-height:1.5}
+
+  .figframe{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:1vh;
+    display:flex;align-items:center;justify-content:center;height:100%;overflow:hidden}
+  .figframe img{max-width:100%;max-height:100%;border-radius:8px;object-fit:contain;
+    box-shadow:0 18px 50px rgba(0,0,0,.5)}
+
+  .triad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.4vw;flex:1;min-height:0;margin-top:1vh}
+  .triad .col{display:flex;flex-direction:column;gap:1vh;min-height:0}
+  .triad .lbl{font-size:1.05vw;font-weight:700;letter-spacing:.05em}
+  .triad .lbl small{display:block;font-weight:400;color:var(--ink-mute);font-size:.82vw;letter-spacing:.02em;margin-top:.3vh}
+  .triad .shot{flex:1;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;
+    overflow:hidden;display:flex;align-items:flex-start;justify-content:center}
+  .triad .shot img{width:100%;object-fit:cover;object-position:top}
+  .triad .arrow{position:relative}
+  .triad .c1 .lbl{color:var(--accent2)} .triad .c2 .lbl{color:var(--accent)} .triad .c3 .lbl{color:var(--accent3)}
+
+  .pillrow{display:flex;gap:.8vw;flex-wrap:wrap;margin-top:1.5vh}
+  .pill{font-size:1vw;padding:.7vh 1.1vw;border-radius:99px;border:1px solid var(--line2);color:var(--ink-dim)}
+  .pill.a{border-color:var(--good);color:var(--good)}
+  .pill.b{border-color:var(--warn);color:var(--warn)}
+  .pill.c{border-color:var(--bad);color:var(--bad)}
+
+  .quote{font-size:1.9vw;font-weight:700;line-height:1.45;margin-top:auto;max-width:50ch}
+  .quote .em{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;
+    background-clip:text;-webkit-text-fill-color:transparent}
+
+  .check{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:1.4vh 2.4vw;margin-top:1vh}
+  .check li{font-size:1.28vw;color:var(--ink);position:relative;padding-left:2.6vw;line-height:1.4}
+  .check li::before{content:"☐";position:absolute;left:0;top:-.2vh;font-size:1.6vw;color:var(--accent)}
+
+  .gate{background:linear-gradient(135deg,rgba(255,211,107,.12),rgba(255,123,213,.08));
+    border:1px solid var(--warn);border-radius:14px;padding:2vh 1.6vw;margin-top:2vh}
+  .gate b{color:var(--warn)}
+
+  .nav{position:absolute;right:3vw;bottom:3vh;display:flex;gap:.6vw;z-index:10}
+  .nav button{background:rgba(192,139,255,.12);border:1px solid var(--line2);color:var(--ink);
+    width:2.4vw;height:2.4vw;min-width:34px;min-height:34px;border-radius:8px;font-size:1.1vw;cursor:pointer}
+  .nav button:hover{background:rgba(192,139,255,.28)}
+  .progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:20;transition:width .3s}
+
+  .cover-meta{display:flex;gap:2.5vw;margin-top:3vh;font-size:1.1vw;color:var(--ink-mute)}
+  .cover-meta b{color:var(--ink-dim);font-weight:600}
+  .glow{position:absolute;width:34vw;height:34vw;border-radius:50%;filter:blur(60px);opacity:.5;z-index:-1}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="progress" id="progress"></div>
+<div id="deck">
+
+  <!-- 1 COVER -->
+  <section class="slide active">
+    <div style="margin:auto 0">
+      <div class="kicker">Human First · 前端應用討論會</div>
+      <h1>Figma 與<br>前端設計規範</h1>
+      <div class="bar"></div>
+      <p class="lead" style="margin-top:3vh">讓「外部設計稿」變成「可一比一落地的工程資產」<br>
+        —— 以 KR 新平台「快速換版」為核心</p>
+      <div class="cover-meta">
+        <span><b>主軸</b>　Component ↔ Figma Node 1:1</span>
+        <span><b>工具</b>　/ui-to-code 標準工作流</span>
+        <span><b>日期</b>　2026.07.02</span>
+      </div>
+    </div>
+    <div class="tag">KR_GG_WIN · 前端團隊</div>
+    <div class="pageno">01</div>
+  </section>
+
+  <!-- 2 情境 -->
+  <section class="slide">
+    <div class="kicker">背景</div>
+    <h2>我們的合作<span class="em">現實</span></h2>
+    <ul class="pts">
+      <li><b>設計是外部人員</b>　不在我們的工程流程內，溝通成本高、迭代慢。</li>
+      <li><b>Figma 來源是 Sketch 轉檔</b>　拿到的不是原生 Figma，而是一張張<b>扁平、絕對定位</b>的圖層。</li>
+      <li><b>新平台核心需求＝快速換版（Reskin）</b>　同一套功能，多平台、多套皮膚（classic / pink / blue / green / 宇宙紫…）要能產線化。</li>
+    </ul>
+    <div class="quote">設計給的是「<span class="em">一張圖</span>」，我們要的是「<span class="em">一個可組裝的元件系統</span>」<br>
+      <span style="font-size:1.2vw;color:var(--ink-mute);font-weight:400">—— 中間的落差，目前全靠前端人工補。</span></div>
+    <div class="tag">情境</div><div class="pageno">02</div>
+  </section>
+
+  <!-- 3 Sketch轉Figma缺什麼 -->
+  <section class="slide">
+    <div class="kicker">痛點根源</div>
+    <h2>Sketch 轉 Figma，到底<span class="em">缺了什麼</span></h2>
+    <table>
+      <thead><tr><th>原生 Figma 能力</th><th>Sketch 轉檔後</th><th>對前端的後果</th></tr></thead>
+      <tbody>
+        <tr><td><b>Auto Layout</b> 自動排版</td><td>✗ 全是絕對座標</td><td class="cost">間距 / gap 要逐節點手量</td></tr>
+        <tr><td><b>Variables</b> 設計變數</td><td>✗ 顏色散成一堆 hex</td><td class="cost">token 對照只能逆向猜，對不齊皮膚</td></tr>
+        <tr><td><b>Component + Variants</b></td><td>✗ 每張卡都是獨立圖層</td><td class="cost">9 宮格、10 彩票項看不出是同一元件</td></tr>
+        <tr><td><b>Constraints</b> 父容器行為</td><td>✗ 無拉伸／固定資訊</td><td class="cost">RWD 行為靠猜，響應式無依據</td></tr>
+      </tbody>
+    </table>
+    <div class="quote" style="font-size:1.55vw;margin-top:3vh">不是前端不會做，而是<span class="em">設計稿沒帶「結構資訊」</span>，前端只能做逆向工程。</div>
+    <div class="tag">痛點</div><div class="pageno">03</div>
+  </section>
+
+  <!-- 4 協作模型 -->
+  <section class="slide">
+    <div class="kicker">我們想要的協作模型</div>
+    <h2>Component <span class="em">↔</span> Figma Node，一個對一個</h2>
+    <div class="grid2">
+      <ul class="pts">
+        <li>換版不是「重畫一個畫面」，而是<b>既有 Angular 元件 ↔ Figma 節點</b>，一對一對應。</li>
+        <li>前端原則（已寫進 /ui-to-code）：<br><b>只動 .html / .scss，TS 邏輯幾乎不動</b>——沿用 DOM、保留所有綁定。</li>
+        <li>換版＝換「<b>外觀＋間距＋比例</b>」，不是換功能。</li>
+        <li>對得上號 → 換版變成<b>機械式、可預期、可批量</b>的動作。</li>
+      </ul>
+      <div class="cards c3" style="grid-template-columns:1fr;gap:1.4vh">
+        <div class="card"><h3>① 對得上 = 快</h3><p>Node 對 class，改 scss 即生效</p></div>
+        <div class="card"><h3>② 不動 TS = 安全</h3><p>功能不會被換皮改壞</p></div>
+        <div class="card"><h3>③ 可批量 = 產線化</h3><p>多平台多皮膚邊際成本遞減</p></div>
+      </div>
+    </div>
+    <div class="tag">協作模型</div><div class="pageno">04</div>
+  </section>
+
+  <!-- 5 Figma 5條規範 -->
+  <section class="slide">
+    <div class="kicker">給設計端</div>
+    <h2>Figma 應該守的 <span class="em">5 條規範</span></h2>
+    <div class="grid12">
+      <ul class="pts">
+        <li>① 用 <b>Auto Layout</b> 重建組件（按鈕、卡片、列表項）</li>
+        <li>② 用 <b>Variables</b> 抽出顏色和間距</li>
+        <li>③ 用 <b>Component + Variants</b> 把重複元素（如 10 個彩票項）合併</li>
+        <li>④ 用 <b>Constraints</b> 聲明元素在父容器的行為（拉伸／固定）</li>
+        <li>⑤ 能做的話，再出 <b>Mobile / Tablet</b> 兩套畫布</li>
+      </ul>
+      <div class="figframe"><img src="figma-規範.png" alt="figma 五條規範"></div>
+    </div>
+    <div class="quote" style="font-size:1.4vw;margin-top:1.5vh">這 5 條不是設計潔癖——<span class="em">每一條都對應前端一個工作步驟的成本</span>。</div>
+    <div class="tag">設計規範</div><div class="pageno">05</div>
+  </section>
+
+  <!-- 6 核心對照表 -->
+  <section class="slide">
+    <div class="kicker">全場核心</div>
+    <h2>Figma 規範 <span class="em">⇄</span> /ui-to-code 工作流</h2>
+    <table>
+      <thead><tr><th>Figma 規範</th><th>解決什麼</th><th>對應 /ui-to-code</th><th>沒做到的代價</th></tr></thead>
+      <tbody>
+        <tr><td><b>① Auto Layout</b></td><td>間距可被讀取</td><td><span class="code">Step 3</span> 由 x/y/w/h、inset 推導 padding/gap</td><td class="cost">逐節點手量座標</td></tr>
+        <tr><td><b>② Variables</b></td><td>顏色/間距變數化</td><td><span class="code">Step 8</span> get_variable_defs → token、@include v()</td><td class="cost">token 逆向猜，皮膚對不齊</td></tr>
+        <tr><td><b>③ Component+Variants</b></td><td>重複元素一次定義</td><td><span class="code">節點→元件 1:1</span> 9 宮格 / 10 彩票項複用 DOM</td><td class="cost">重複圖層逐張比對易漏</td></tr>
+        <tr><td><b>④ Constraints</b></td><td>父容器行為明確</td><td><span class="code">Step 3 比例</span> 佔比/長寬比→%/aspect-ratio/flex</td><td class="cost">RWD 變形、圖片拉伸</td></tr>
+        <tr><td><b>⑤ Mobile/Tablet</b></td><td>RWD 有設計依據</td><td><span class="code">web/app 雙變體</span> 比例節奏對齊</td><td class="cost">響應式靠前端臆測</td></tr>
+      </tbody>
+    </table>
+    <div class="quote" style="font-size:1.6vw;margin-top:2.5vh">設計多花 <span class="em">1 分鐘</span>結構化，前端少花 <span class="em">1 小時</span>逆向工程。</div>
+    <div class="tag">對照表</div><div class="pageno">06</div>
+  </section>
+
+  <!-- 7 /ui-to-code 是什麼 -->
+  <section class="slide">
+    <div class="kicker">把換版變成標準流程</div>
+    <h2>/ui-to-code 的 <span class="em">4 大交付物</span></h2>
+    <p class="lead">定位：新平台切版專用的「<b style="color:var(--accent)">前置盤點＋規劃</b>」工具，不直接亂改碼。讓每次換版可被審查、可預估工時。</p>
+    <div class="cards c4" style="flex:none;margin-top:3vh">
+      <div class="card"><div class="n">01</div><h3>節點對照表</h3><p>Figma node → DOM class → token，逐一對齊</p></div>
+      <div class="card"><div class="n">02</div><h3>新 token 清單</h3><p>key / 各皮膚值 / 對應 Figma 變數</p></div>
+      <div class="card"><div class="n">03</div><h3>落差清單</h3><p>A／B／C 分類，C 類標「待確認」</p></div>
+      <div class="card"><div class="n">04</div><h3>切版計畫</h3><p>改哪些檔、幾個區塊、TS 是否要動</p></div>
+    </div>
+    <div class="quote" style="font-size:1.45vw">產出經使用者確認「決策 Gate」後，才進入實際切版——<span class="em">先規劃、後動手</span>。</div>
+    <div class="tag">工作流</div><div class="pageno">07</div>
+  </section>
+
+  <!-- 8 落差 A/B/C -->
+  <section class="slide">
+    <div class="kicker">劃清「能自動做」與「要先問」</div>
+    <h2>落差分類 <span class="em">A / B / C</span></h2>
+    <div class="cards c3" style="flex:none;margin-top:1vh">
+      <div class="card" style="border-color:var(--good)"><div class="n" style="background:linear-gradient(135deg,var(--good),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">A</div>
+        <h3>純外觀</h3><p>色 / 圓角 / 間距 / 比例 / 陰影 / 字級 → 直接改 scss</p><div class="pillrow"><span class="pill a">繼續不停</span></div></div>
+      <div class="card" style="border-color:var(--warn)"><div class="n" style="background:linear-gradient(135deg,var(--warn),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">B</div>
+        <h3>結構</h3><p>多 / 少區塊、重排 → 改 html，確認不漏資料</p><div class="pillrow"><span class="pill b">繼續不停</span></div></div>
+      <div class="card" style="border-color:var(--bad)"><div class="n" style="background:linear-gradient(135deg,var(--bad),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">C</div>
+        <h3>涉及 TS / UX</h3><p>元件種類變、新互動、資料來源變</p><div class="pillrow"><span class="pill c">停下問人</span></div></div>
+    </div>
+    <div class="gate"><b>價值：</b>外觀換版可放心交給標準流程；<b>真正動行為的部分一定有人把關</b>，不會默默改壞功能。這正是「Human First」——把判斷留給人，把重複勞動交給流程。</div>
+    <div class="tag">落差分類</div><div class="pageno">08</div>
+  </section>
+
+  <!-- 9 換膚機制 -->
+  <section class="slide">
+    <div class="kicker">一條容易被誤解的規範</div>
+    <h2>換膚機制：不是<span class="em">所有元件</span>都要 token</h2>
+    <div class="grid2">
+      <ul class="pts">
+        <li><b>只有 lottery 元件</b>才走「token＋皮膚 map＋@include v()」，要支援多皮膚。</li>
+        <li>其餘元件（user-center、設定頁、活動頁…）<b>無換膚需求</b> → scss <b>直接落 Figma 值</b>。</li>
+        <li><b>換色 ≠ 只換色值</b>：色＋間距＋比例三者一起對齊；圖片/卡片維持長寬比避免變形。</li>
+        <li class="dim">krm 慣例：宇宙紫換版改 classic.scss 色票值，結構邊框硬編在共用層。</li>
+      </ul>
+      <div class="cards" style="grid-template-columns:1fr;gap:1.4vh;align-content:center">
+        <div class="card" style="border-color:var(--line2)"><h3 style="color:var(--accent3)">lottery 元件</h3><p>token 化 → 一處改、多皮膚生效</p></div>
+        <div class="card"><h3 style="color:var(--accent)">非 lottery 元件</h3><p>scss 直接落值 → 不過度抽象、改得快</p></div>
+      </div>
+    </div>
+    <div class="tag">換膚機制</div><div class="pageno">09</div>
+  </section>
+
+  <!-- 10 案例 -->
+  <section class="slide">
+    <div class="kicker">實戰案例</div>
+    <h2>KRM 新手福利 · <span class="em">宇宙紫換版</span>（1:1）</h2>
+    <div class="triad">
+      <div class="col c1"><div class="lbl">原本<small>桃紅皮膚 · 上一版</small></div><div class="shot"><img src="原本.png" alt="原本"></div></div>
+      <div class="col c2"><div class="lbl">Figma 設計稿<small>宇宙紫 · 設計意圖</small></div><div class="shot"><img src="figma設計.png" alt="figma 設計"></div></div>
+      <div class="col c3"><div class="lbl">完成版<small>前端 1:1 實作</small></div><div class="shot"><img src="完成版.png" alt="完成版"></div></div>
+    </div>
+    <ul class="pts" style="margin-top:1.5vh">
+      <li class="dim">全程照 /ui-to-code：<b>沿用 DOM、只換外觀與間距比例、TS 不動</b>。設計稿 → 完成版幾乎像素對齊。</li>
+      <li class="dim">若這份 Figma 有用 <b>Component+Variants</b>：9 張任務卡＝1 元件×9 實例，改 1 處全套生效；現況卻是 9 張獨立圖層，得逐張核對 ← 正好對應前面痛點。</li>
+    </ul>
+    <div class="tag">案例</div><div class="pageno">10</div>
+  </section>
+
+  <!-- 11 Checklist -->
+  <section class="slide">
+    <div class="kicker">落地成果</div>
+    <h2>給外部設計的<span class="em">交付 Checklist</span></h2>
+    <p class="lead">把這 5 條變成<b style="color:var(--accent)">交稿驗收標準</b>，前端收稿即可直接跑 /ui-to-code。</p>
+    <ul class="check">
+      <li>卡片 / 按鈕 / 列表項都是 <b>Auto Layout</b>（非絕對定位）</li>
+      <li>顏色、主要間距已抽成 <b>Variables</b>，命名清楚</li>
+      <li>重複元素做成 <b>Component + Variants</b>，標明哪些是同一元件</li>
+      <li>關鍵元素有 <b>Constraints</b>（拉伸 / 固定）</li>
+      <li>提供<b>節點層級連結</b>（含 node-id，前端才能精準定位）</li>
+      <li>重要頁面附 <b>Mobile / Tablet</b> 畫布</li>
+    </ul>
+    <div class="tag">交付規範</div><div class="pageno">11</div>
+  </section>
+
+  <!-- 12 成效展望 -->
+  <section class="slide">
+    <div class="glow" style="background:#7a2bd6;bottom:-12vh;right:4vw"></div>
+    <div class="kicker">成效與展望</div>
+    <h2>從「<span class="em">一頁一頁刻</span>」走向「<span class="em">一鍵產線</span>」</h2>
+    <div class="cards c3" style="flex:none;margin-top:1vh">
+      <div class="card"><h3 style="color:var(--accent3)">短期</h3><p>設計交付規範 ＋ /ui-to-code 工作流綁定 → 換版工時可預估、可審查</p></div>
+      <div class="card"><h3 style="color:var(--accent)">中期</h3><p>節點對照表＋token 清單沉澱成資產 → 新平台換版邊際成本遞減</p></div>
+      <div class="card"><h3 style="color:var(--accent2)">長期</h3><p>設計結構化 ＋ 前端 1:1 對應 → 新平台換皮產線化</p></div>
+    </div>
+    <div class="quote" style="margin-top:auto"><span class="em">Human First</span><br>讓人專注在判斷（決策 Gate），把重複勞動交給標準流程。</div>
+    <div class="tag">總結</div><div class="pageno">12</div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button onclick="go(-1)">‹</button>
+  <button onclick="go(1)">›</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    document.getElementById('progress').style.width=((i+1)/slides.length*100)+'%';
+    if(window.__warp)window.__warp();
+  }
+  function go(d){show(i+d)}
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){go(1);e.preventDefault()}
+    if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){go(-1);e.preventDefault()}
+    if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1);
+    if(e.key==='f'){document.documentElement.requestFullscreen?.()}
+  });
+  show(0);
+</script>
+
+<!-- 宇宙紫粒子場 + 星座連線（three.js）-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  if(!window.THREE){console.warn('three.js 未載入（離線？），背景動畫略過');return;}
+  const canvas=document.getElementById('bg');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(0x0d0518,0.00045);
+  const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,1,4000);
+  camera.position.set(0,0,760);
+
+  const palette=[new THREE.Color(0xc08bff),new THREE.Color(0xff7bd5),
+                 new THREE.Color(0x7ee0e0),new THREE.Color(0x9a6bff)];
+
+  // 圓形柔光貼圖
+  function disc(){
+    const c=document.createElement('canvas');c.width=c.height=64;
+    const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);
+    g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.3,'rgba(255,255,255,.65)');
+    g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64);
+    const t=new THREE.Texture(c);t.needsUpdate=true;return t;
+  }
+  const sprite=disc();
+
+  // 深空星塵
+  const N=1500;
+  const gStar=new THREE.BufferGeometry();
+  const sPos=new Float32Array(N*3),sCol=new Float32Array(N*3);
+  for(let k=0;k<N;k++){
+    sPos[k*3]=(Math.random()-.5)*2800;
+    sPos[k*3+1]=(Math.random()-.5)*1700;
+    sPos[k*3+2]=(Math.random()-.5)*1900-300;
+    const c=palette[k%palette.length];
+    sCol[k*3]=c.r;sCol[k*3+1]=c.g;sCol[k*3+2]=c.b;
+  }
+  gStar.setAttribute('position',new THREE.BufferAttribute(sPos,3));
+  gStar.setAttribute('color',new THREE.BufferAttribute(sCol,3));
+  const mStar=new THREE.PointsMaterial({size:7,map:sprite,vertexColors:true,
+    transparent:true,opacity:.9,blending:THREE.AdditiveBlending,depthWrite:false});
+  const stars=new THREE.Points(gStar,mStar);scene.add(stars);
+
+  // 星座網絡（漂浮節點 + 近距連線）
+  const M=92, DIST=235, bound={x:780,y:500,z:360};
+  const nodes=[];
+  for(let k=0;k<M;k++){
+    nodes.push({
+      p:new THREE.Vector3((Math.random()-.5)*1500,(Math.random()-.5)*950,(Math.random()-.5)*640),
+      v:new THREE.Vector3((Math.random()-.5)*.45,(Math.random()-.5)*.45,(Math.random()-.5)*.45)
+    });
+  }
+  const net=new THREE.Group();scene.add(net);
+  const nGeo=new THREE.BufferGeometry();
+  const nPos=new Float32Array(M*3),nCol=new Float32Array(M*3);
+  for(let k=0;k<M;k++){const c=palette[k%palette.length];nCol[k*3]=c.r;nCol[k*3+1]=c.g;nCol[k*3+2]=c.b;}
+  nGeo.setAttribute('position',new THREE.BufferAttribute(nPos,3));
+  nGeo.setAttribute('color',new THREE.BufferAttribute(nCol,3));
+  const nMat=new THREE.PointsMaterial({size:13,map:sprite,vertexColors:true,
+    transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false});
+  net.add(new THREE.Points(nGeo,nMat));
+
+  const lPos=new Float32Array(M*M*6);
+  const lGeo=new THREE.BufferGeometry();
+  lGeo.setAttribute('position',new THREE.BufferAttribute(lPos,3));
+  const lMat=new THREE.LineBasicMaterial({color:0xb98bff,transparent:true,
+    opacity:.17,blending:THREE.AdditiveBlending,depthWrite:false});
+  net.add(new THREE.LineSegments(lGeo,lMat));
+
+  // 滑鼠視差 + warp 過場
+  const mouse={x:0,y:0,tx:0,ty:0};
+  addEventListener('mousemove',e=>{mouse.tx=e.clientX/innerWidth-.5;mouse.ty=e.clientY/innerHeight-.5;});
+  let warp=0; window.__warp=function(){warp=1;};
+
+  function resize(){renderer.setSize(innerWidth,innerHeight);
+    camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
+  addEventListener('resize',resize);resize();
+
+  let t=0;
+  function frame(){
+    requestAnimationFrame(frame);
+    t+=0.0016+warp*0.018; warp*=0.92; if(warp<0.001)warp=0;
+    mouse.x+=(mouse.tx-mouse.x)*0.045; mouse.y+=(mouse.ty-mouse.y)*0.045;
+
+    stars.rotation.y=t*0.6; stars.rotation.x=Math.sin(t*0.3)*0.06;
+    mStar.size=7+warp*10; lMat.opacity=.17+warp*.25;
+
+    const np=nGeo.attributes.position.array;
+    for(let k=0;k<M;k++){
+      const n=nodes[k]; n.p.addScaledVector(n.v,1+warp*7);
+      if(n.p.x>bound.x||n.p.x<-bound.x)n.v.x*=-1;
+      if(n.p.y>bound.y||n.p.y<-bound.y)n.v.y*=-1;
+      if(n.p.z>bound.z||n.p.z<-bound.z)n.v.z*=-1;
+      np[k*3]=n.p.x;np[k*3+1]=n.p.y;np[k*3+2]=n.p.z;
+    }
+    nGeo.attributes.position.needsUpdate=true;
+
+    let pi=0;
+    for(let a=0;a<M;a++)for(let b=a+1;b<M;b++){
+      const da=nodes[a].p,db=nodes[b].p;
+      const dx=da.x-db.x,dy=da.y-db.y,dz=da.z-db.z;
+      if(dx*dx+dy*dy+dz*dz<DIST*DIST){
+        lPos[pi++]=da.x;lPos[pi++]=da.y;lPos[pi++]=da.z;
+        lPos[pi++]=db.x;lPos[pi++]=db.y;lPos[pi++]=db.z;
+      }
+    }
+    lGeo.setDrawRange(0,pi/3); lGeo.attributes.position.needsUpdate=true;
+    net.rotation.y=t*0.22;
+
+    camera.position.x+=((mouse.x*240)-camera.position.x)*0.05;
+    camera.position.y+=((-mouse.y*150)-camera.position.y)*0.05;
+    camera.position.z=760-warp*120;
+    camera.lookAt(0,0,0);
+
+    renderer.render(scene,camera);
+  }
+  frame();
+})();
+</script>
+</body>
+</html>
